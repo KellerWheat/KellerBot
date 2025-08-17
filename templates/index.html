@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KellerBot Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .status-card .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+        }
+
+        .config-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .config-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-item label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .config-item input, .config-item textarea {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .config-item input:focus, .config-item textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .messages-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .messages-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .message-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .message-type {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .message-timestamp {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .message-options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .message-option {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .message-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .message-option.selected {
+            border-color: #4CAF50;
+            background: #f0f8f0;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #4caf50;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .message-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 KellerBot Dashboard</h1>
+            <div class="status-grid" id="statusGrid">
+                <div class="status-card">
+                    <h3>Messages Today</h3>
+                    <div class="value" id="messagesToday">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>Probability Per Cycle</h3>
+                    <div class="value" id="probabilityPerCycle">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>Polling Interval</h3>
+                    <div class="value" id="pollingInterval">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>Pending Messages</h3>
+                    <div class="value" id="pendingMessages">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>Generating Messages</h3>
+                    <div class="value" id="generatingMessages">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>Bot Server</h3>
+                    <div class="value" id="botServer">-</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-secondary" id="generateIntro">Generate Introduction</button>
+                <button class="btn btn-warning" id="generateTest">Generate Test Message</button>
+                <button class="btn btn-primary" id="refreshData">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h2>⚙️ Configuration</h2>
+            <div class="config-grid">
+                <div class="config-item">
+                    <label for="randomMessagesPerDay">Target Random Messages Per Day</label>
+                    <input type="number" id="randomMessagesPerDay" min="0" max="50">
+                    <small style="color: #666; display: block; margin-top: 5px;">Used to calculate probability per polling cycle</small>
+                </div>
+                <div class="config-item">
+                    <label for="pollingIntervalSeconds">Polling Interval (seconds)</label>
+                    <input type="number" id="pollingIntervalSeconds" min="1" max="3600" step="1">
+                    <small style="color: #666; display: block; margin-top: 5px;">How often the bot checks for new messages (1s - 1 hour)</small>
+                </div>
+                <div class="config-item">
+                    <label for="replyChancePerLike">Reply Chance Per Like</label>
+                    <input type="number" id="replyChancePerLike" min="0" max="1" step="0.1">
+                </div>
+                <div class="config-item">
+                    <label for="minimumReplyChance">Minimum Reply Chance</label>
+                    <input type="number" id="minimumReplyChance" min="0" max="1" step="0.01">
+                    <small style="color: #666; display: block; margin-top: 5px;">Minimum probability for replying to messages with low likes</small>
+                </div>
+                <div class="config-item">
+                    <label for="messageGenerationTries">Message Generation Tries</label>
+                    <input type="number" id="messageGenerationTries" min="1" max="10">
+                </div>
+                <div class="config-item">
+                    <label for="introductionPrompt">Introduction Prompt</label>
+                    <textarea id="introductionPrompt" rows="3"></textarea>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="saveConfig" style="margin-top: 20px;">Save Configuration</button>
+            <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; color: #856404;">
+                <strong>⚠️ Note:</strong> Changes to the polling interval will take effect after the bot is restarted. Reply functionality now uses proper GroupMe reply attachments.
+            </div>
+        </div>
+
+        <div class="messages-section">
+            <h2>💬 Pending Messages</h2>
+            <div id="messagesContainer">
+                <div class="loading">Loading messages...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentConfig = {};
+        let pendingMessages = [];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStatus();
+            loadConfig();
+            loadMessages();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadStatus, 30000);
+            setInterval(loadMessages, 30000);
+        });
+
+        function setupEventListeners() {
+            // Bot control buttons
+            document.getElementById('generateIntro').addEventListener('click', generateIntroduction);
+            document.getElementById('generateTest').addEventListener('click', generateTestMessage);
+            
+            // Configuration
+            document.getElementById('saveConfig').addEventListener('click', saveConfiguration);
+            
+            // Refresh button
+            document.getElementById('refreshData').addEventListener('click', refreshAllData);
+        }
+
+        async function loadStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+                
+
+                document.getElementById('messagesToday').textContent = `${status.messages_per_day || 0}/${status.target_messages_per_day || 0}`;
+                document.getElementById('probabilityPerCycle').textContent = `${(status.probability_per_cycle || 0) * 100}%`;
+                document.getElementById('pollingInterval').textContent = `${status.polling_interval_seconds || 120}s`;
+                document.getElementById('pendingMessages').textContent = status.pending_messages || 0;
+                document.getElementById('generatingMessages').textContent = status.generating_messages || 0;
+                document.getElementById('botServer').textContent = status.bot_server_set ? '✅ Set' : '❌ Not Set';
+                
+            } catch (error) {
+                console.error('Error loading status:', error);
+                showError('Failed to load bot status');
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                currentConfig = await response.json();
+                
+                // Populate form fields
+                document.getElementById('randomMessagesPerDay').value = currentConfig.random_messages_per_day || 5;
+                document.getElementById('pollingIntervalSeconds').value = currentConfig.polling_interval_seconds || 120;
+                document.getElementById('replyChancePerLike').value = currentConfig.reply_chance_per_like || 0.3;
+                document.getElementById('minimumReplyChance').value = currentConfig.minimum_reply_chance || 0.01;
+                document.getElementById('messageGenerationTries').value = currentConfig.message_generation_tries || 3;
+                document.getElementById('introductionPrompt').value = currentConfig.introduction_prompt || '';
+                
+            } catch (error) {
+                console.error('Error loading config:', error);
+                showError('Failed to load configuration');
+            }
+        }
+
+        async function loadMessages() {
+            try {
+                const response = await fetch('/api/messages');
+                pendingMessages = await response.json();
+                
+                renderMessages();
+                
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                showError('Failed to load messages');
+            }
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('messagesContainer');
+            
+            if (pendingMessages.length === 0) {
+                container.innerHTML = '<div class="loading">No pending messages</div>';
+                return;
+            }
+            
+            container.innerHTML = pendingMessages.map(message => `
+                <div class="message-card">
+                    <div class="message-header">
+                        <span class="message-type">${message.message_type.toUpperCase()}</span>
+                        <span class="message-timestamp">${new Date(message.timestamp).toLocaleString()}</span>
+                    </div>
+                    
+                    ${message.original_message ? `<p><strong>Original:</strong> ${message.original_message}</p>` : ''}
+                    
+                    <div class="message-options">
+                        ${message.generated_messages.map((msg, index) => `
+                            <div class="message-option ${message.selected_message === msg ? 'selected' : ''}" 
+                                 onclick="selectMessageOption('${message.id}', ${index})">
+                                ${msg}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="message-actions">
+                        <button class="btn btn-primary" onclick="sendMessage('${message.id}')" 
+                                ${!message.selected_message ? 'disabled' : ''}>
+                            Send Message
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteMessage('${message.id}')">
+                            Delete Message
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+
+
+        async function generateIntroduction() {
+            try {
+                const response = await fetch('/api/generate/introduction', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Introduction message generated');
+                    loadMessages();
+                } else {
+                    showError('Failed to generate introduction');
+                }
+            } catch (error) {
+                console.error('Error generating introduction:', error);
+                showError('Failed to generate introduction');
+            }
+        }
+
+        async function generateTestMessage() {
+            try {
+                const response = await fetch('/api/generate/test', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Test message generated');
+                    loadMessages();
+                } else {
+                    showError('Failed to generate test message');
+                }
+            } catch (error) {
+                console.error('Error generating test message:', error);
+                showError('Failed to generate test message');
+            }
+        }
+
+        async function selectMessageOption(messageId, optionIndex) {
+            try {
+                const response = await fetch(`/api/messages/${messageId}/select`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ option_index: optionIndex })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    loadMessages();
+                }
+            } catch (error) {
+                console.error('Error selecting message option:', error);
+            }
+        }
+
+        async function sendMessage(messageId) {
+            try {
+                const response = await fetch(`/api/messages/${messageId}/send`, { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Message sent successfully');
+                    loadMessages();
+                    loadStatus();
+                } else {
+                    showError('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showError('Failed to send message');
+            }
+        }
+
+        async function deleteMessage(messageId) {
+            try {
+                const response = await fetch(`/api/messages/${messageId}/delete`, { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Message deleted successfully');
+                    loadMessages();
+                } else {
+                    showError('Failed to delete message');
+                }
+            } catch (error) {
+                console.error('Error deleting message:', error);
+                showError('Failed to delete message');
+            }
+        }
+
+        async function saveConfiguration() {
+            try {
+                const newConfig = {
+                    random_messages_per_day: parseInt(document.getElementById('randomMessagesPerDay').value),
+                    polling_interval_seconds: parseInt(document.getElementById('pollingIntervalSeconds').value),
+                    reply_chance_per_like: parseFloat(document.getElementById('replyChancePerLike').value),
+                    minimum_reply_chance: parseFloat(document.getElementById('minimumReplyChance').value),
+                    message_generation_tries: parseInt(document.getElementById('messageGenerationTries').value),
+                    introduction_prompt: document.getElementById('introductionPrompt').value
+                };
+                
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newConfig)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showSuccess('Configuration saved successfully');
+                    currentConfig = newConfig;
+                } else {
+                    showError('Failed to save configuration');
+                }
+            } catch (error) {
+                console.error('Error saving configuration:', error);
+                showError('Failed to save configuration');
+            }
+        }
+
+        async function refreshAllData() {
+            try {
+                // Show loading state on refresh button
+                const refreshBtn = document.getElementById('refreshData');
+                const originalText = refreshBtn.innerHTML;
+                refreshBtn.innerHTML = '⏳ Refreshing...';
+                refreshBtn.disabled = true;
+                
+                // Refresh both status and messages
+                await Promise.all([
+                    loadStatus(),
+                    loadMessages()
+                ]);
+                
+                showSuccess('Data refreshed successfully');
+                
+                // Restore button state
+                refreshBtn.innerHTML = originalText;
+                refreshBtn.disabled = false;
+                
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                showError('Failed to refresh data');
+                
+                // Restore button state on error
+                const refreshBtn = document.getElementById('refreshData');
+                refreshBtn.innerHTML = '🔄 Refresh';
+                refreshBtn.disabled = false;
+            }
+        }
+
+        function showSuccess(message) {
+            showNotification(message, 'success');
+        }
+
+        function showError(message) {
+            showNotification(message, 'error');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = type === 'success' ? 'success' : 'error';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

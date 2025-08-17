@@ -1,0 +1,8 @@
+{
+  "random_messages_per_day": 5,
+  "reply_chance_per_like": 0.1,
+  "minimum_reply_chance": 0.01,
+  "message_generation_tries": 5,
+  "polling_interval_seconds": 4,
+  "introduction_prompt": "Introduce yourself to the groupchat as Kellerbot, make sure to emphasize that real Keller is not responsible for any of your actions, threating them if they hold real Keller accountable. Start with Hello everyone, I'm Kellerbot, I love George, and..."
+}

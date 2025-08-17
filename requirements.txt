@@ -1,0 +1,18 @@
+# Main project dependencies
+requests
+beautifulsoup4
+selenium
+webdriver-manager
+pandas
+python-dotenv
+lxml
+openai
+
+# Async web framework dependencies
+fastapi
+uvicorn[standard]
+jinja2
+
+# GroupMe dependencies
+requests
+python-dotenv
